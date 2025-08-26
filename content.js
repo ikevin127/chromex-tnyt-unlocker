@@ -4,7 +4,7 @@
 const CONFIG = {
   lockSelector: `.vi-gateway-container[data-testid="vi-gateway-container"]`,
   bannerSelector: `[data-testid="onsite-messaging-unit-gateway"][data-audience]`,
-  gradientSelector: `.vi-gateway-container[data-testid="vi-gateway-container"] > div:nth-of-type(3)`,
+  gradientSelector: `.vi-gateway-container[data-testid="vi-gateway-container"] > div:last-of-type`,
   pollIntervalMs: 1000,
   pollMaxMs: 60000
 };
