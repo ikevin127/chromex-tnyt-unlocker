@@ -3,6 +3,8 @@
 
 const CONFIG = {
   lockSelector: `.vi-gateway-container[data-testid="vi-gateway-container"]`,
+  scrollLockSelector: `main#site-content`,
+  headerLockSelector: `div#standalone-header`,
   bannerSelector: `[data-testid="onsite-messaging-unit-gateway"][data-audience]`,
   gradientSelector: `.vi-gateway-container[data-testid="vi-gateway-container"] > div:last-of-type`,
   pollIntervalMs: 1000,
@@ -29,11 +31,13 @@ if (document.readyState === "loading") {
   startPromptWatcher();
 }
 
-function bothTargetsPresent() {
+function allTargetsPresent() {
   try {
     const lockEl = CONFIG.lockSelector && document.querySelector(CONFIG.lockSelector);
+    const scrollLockEl = CONFIG.scrollLockSelector && document.querySelector(CONFIG.scrollLockSelector);
+    const headerLockEl = CONFIG.headerLockSelector && document.querySelector(CONFIG.headerLockSelector);
     const bannerEl = CONFIG.bannerSelector && document.querySelector(CONFIG.bannerSelector);
-    return !!(lockEl && bannerEl);
+    return !!(lockEl && scrollLockEl && headerLockEl && bannerEl);
   } catch {
     return false;
   }
@@ -48,7 +52,7 @@ function startPromptWatcher() {
       hideScrollToUnlockPrompt();
       return;
     }
-    if (bothTargetsPresent()) {
+    if (allTargetsPresent()) {
       if (!promptVisible) showScrollToUnlockPrompt();
     } else if (promptVisible) {
       hideScrollToUnlockPrompt();
@@ -185,14 +189,18 @@ function startPolling() {
 
 function scanAndAct() {
   const lockEl = document.querySelector(CONFIG.lockSelector);
+  const scrollLockEl = document.querySelector(CONFIG.scrollLockSelector);
+  const headerLockEl = document.querySelector(CONFIG.headerLockSelector);
   const bannerEl = document.querySelector(CONFIG.bannerSelector);
   const gradientEl = document.querySelector(CONFIG.gradientSelector);
   let changed = false;
 
-  if (!unlockedScroll && CONFIG.lockSelector) {
-    if (lockEl) {
+  if (!unlockedScroll && CONFIG.lockSelector && CONFIG.scrollLockSelector) {
+    if (lockEl && scrollLockEl && headerLockEl) {
       lockEl.style.setProperty("overflow", "visible", "important");
       lockEl.style.setProperty("position", "static", "important");
+      scrollLockEl.style.setProperty("position", "relative", "important");
+      headerLockEl.style.setProperty("position", "relative", "important");
       unlockedScroll = true;
       changed = true;
     }
