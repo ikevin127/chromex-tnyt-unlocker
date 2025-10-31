@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "The New York Times Unlocker",
-  "version": "2025.3",
+  "version": "2025.4",
   "description": "The New York Times Unlocker: An extension that whisks away subscription barriers and celebrates with a lively animation.",
   "icons": {
     "16": "tnyt-unlocker.png",

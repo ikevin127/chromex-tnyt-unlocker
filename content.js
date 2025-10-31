@@ -14,6 +14,7 @@ const CONFIG = {
 let pollTimer = null;
 let pollStart = 0;
 
+let isAlreadyUnlocked = false;
 let unlockedScroll = false;
 let removedBanner = false;
 let removedGradient = false;
@@ -34,10 +35,8 @@ if (document.readyState === "loading") {
 function allTargetsPresent() {
   try {
     const lockEl = CONFIG.lockSelector && document.querySelector(CONFIG.lockSelector);
-    const scrollLockEl = CONFIG.scrollLockSelector && document.querySelector(CONFIG.scrollLockSelector);
-    const headerLockEl = CONFIG.headerLockSelector && document.querySelector(CONFIG.headerLockSelector);
     const bannerEl = CONFIG.bannerSelector && document.querySelector(CONFIG.bannerSelector);
-    return !!(lockEl && scrollLockEl && headerLockEl && bannerEl);
+    return !!(lockEl && bannerEl);
   } catch {
     return false;
   }
@@ -93,7 +92,7 @@ function showScrollToUnlockPrompt() {
       max-width: 80vw;
       padding: 14px 18px;
       border-radius: 14px;
-      background: rgba(0,0,0,0.70);
+      background: rgba(0,0,0,0.7);
       color: #e5e7eb;
       font: 500 14px/1.3 -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif;
       box-shadow: 0 12px 32px rgba(0,0,0,0.35);
@@ -171,6 +170,7 @@ function startPolling() {
       if (satisfied >= 3) {
         clearInterval(pollTimer);
         pollTimer = null;
+        if (isAlreadyUnlocked) return;
         showSuccessAnimation();
       }
 
@@ -195,31 +195,37 @@ function scanAndAct() {
   const gradientEl = document.querySelector(CONFIG.gradientSelector);
   let changed = false;
 
-  if (!unlockedScroll && CONFIG.lockSelector && CONFIG.scrollLockSelector) {
-    if (lockEl && scrollLockEl && headerLockEl) {
-      lockEl.style.setProperty("overflow", "visible", "important");
-      lockEl.style.setProperty("position", "static", "important");
-      scrollLockEl.style.setProperty("position", "relative", "important");
-      headerLockEl.style.setProperty("position", "relative", "important");
-      unlockedScroll = true;
-      changed = true;
-    }
+  const lockStyles = lockEl ? window.getComputedStyle(lockEl) : null;
+  const isUnlocked = lockStyles && lockStyles.overflow !== "hidden" && (lockStyles.position !== "fixed" || lockStyles.position !== "absolute");
+
+  isAlreadyUnlocked = isUnlocked;
+
+  if (isAlreadyUnlocked) {
+    unlockedScroll = true;
+    removedBanner = true;
+    removedGradient = true;
+    changed = true;
   }
 
-  if (!removedBanner && CONFIG.bannerSelector) {
-    if (bannerEl) {
-      bannerEl.remove();
-      removedBanner = true;
-      changed = true;
-    }
+  if (!unlockedScroll && lockEl) {
+    lockEl.style.setProperty("overflow", "visible", "important");
+    lockEl.style.setProperty("position", "static", "important");
+    scrollLockEl?.style.setProperty("position", "relative", "important");
+    headerLockEl?.style.setProperty("position", "relative", "important");
+    unlockedScroll = true;
+    changed = true;
   }
 
-  if (!removedGradient && CONFIG.gradientSelector) {
-    if (gradientEl) {
-      gradientEl.remove();
-      removedGradient = true;
-      changed = true;
-    }
+  if (!removedBanner && bannerEl) {
+    bannerEl.remove();
+    removedBanner = true;
+    changed = true;
+  }
+
+  if (!removedGradient && gradientEl) {
+    gradientEl.remove();
+    removedGradient = true;
+    changed = true;
   }
 
   return changed;
@@ -339,10 +345,10 @@ function showSuccessAnimation() {
   // Brief checkmark badge in the center
   const badge = document.createElement("div");
   badge.style.position = "absolute";
-  badge.style.width = "180px";
-  badge.style.height = "180px";
-  badge.style.borderRadius = "20px";
-  badge.style.background = "rgba(0,0,0,0.75)";
+  badge.style.width = "170px";
+  badge.style.height = "170px";
+  badge.style.borderRadius = "50%";
+  badge.style.background = "rgba(0,0,0,0.7)";
   badge.style.backdropFilter = "blur(4px)";
   badge.style.display = "flex";
   badge.style.alignItems = "center";
