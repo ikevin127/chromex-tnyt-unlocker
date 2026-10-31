@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "The New York Times Unlocker",
-  "version": "2025.4",
+  "version": "2026.10",
   "description": "The New York Times Unlocker: An extension that whisks away subscription barriers and celebrates with a lively animation.",
   "icons": {
     "16": "tnyt-unlocker.png",
@@ -10,7 +10,7 @@
     "128": "tnyt-unlocker.png"
   },
   "action": {
-    "default_title": "Your Extension",
+    "default_title": "The New York Times Unlocker",
     "default_icon": {
       "16": "tnyt-unlocker.png",
       "32": "tnyt-unlocker.png"
@@ -18,14 +18,22 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["tnyt-unlocker.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "tnyt-unlocker.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "content_scripts": [
     {
-      "matches": ["https://www.nytimes.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://www.nytimes.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ]

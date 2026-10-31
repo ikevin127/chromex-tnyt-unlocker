@@ -26,7 +26,7 @@ let promptWatcher = null;
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     startPromptWatcher();
-  }, { once: true });
+  }, {once: true});
 } else {
   // DOM is already ready (e.g., with run_at: "document_idle")
   startPromptWatcher();
@@ -193,6 +193,13 @@ function scanAndAct() {
   const headerLockEl = document.querySelector(CONFIG.headerLockSelector);
   const bannerEl = document.querySelector(CONFIG.bannerSelector);
   const gradientEl = document.querySelector(CONFIG.gradientSelector);
+
+  // Paywall marks content `inert` (blocks click/select/focus); strip it every tick
+  document.querySelectorAll("[data-paywall-inert]").forEach(el => {
+    el.removeAttribute("inert");
+    el.removeAttribute("aria-hidden");
+  });
+
   let changed = false;
 
   const lockStyles = lockEl ? window.getComputedStyle(lockEl) : null;
@@ -242,7 +249,7 @@ function onFirstScrollGesture() {
   startPolling();
 }
 
-const oncePassive = { once: true, passive: true };
+const oncePassive = {once: true, passive: true};
 window.addEventListener("wheel", onFirstScrollGesture, oncePassive);
 window.addEventListener("scroll", onFirstScrollGesture, oncePassive);
 window.addEventListener("touchstart", onFirstScrollGesture, oncePassive);
@@ -295,7 +302,7 @@ function showSuccessAnimation() {
   window.addEventListener("resize", onResize);
 
   const colors = ["#16a34a", "#22c55e", "#38bdf8", "#f59e0b", "#ef4444", "#a855f7"];
-  const pieces = Array.from({ length: 120 }).map(() => ({
+  const pieces = Array.from({length: 120}).map(() => ({
     x: Math.random() * width,
     y: -10 - Math.random() * height * 0.3,
     r: 4 + Math.random() * 6,
